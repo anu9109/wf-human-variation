@@ -108,6 +108,11 @@ def make_report(params, versions, cnv_df, args):
             copy number events greater than 5Mb, as this is the size limit for the query
             used to generate the link.""")
 
+            if args.genome_build == "chm13v2":
+                p("""Note: Ensembl gene links are not available for chm13v2/T2T-CHM13v2.0
+                as CHM13v2 coordinates do not map directly to the Ensembl GRCh38 REST
+                API.""")
+
             data_table = DataTable(
                 headers=[
                     'Chr',
@@ -119,6 +124,8 @@ def make_report(params, versions, cnv_df, args):
 
             for index, row in cnv_df.iterrows():
                 if row['size'] > 5000000:
+                    genes_in_region = "Unavailable"
+                elif args.genome_build == "chm13v2":
                     genes_in_region = "Unavailable"
                 else:
                     if args.genome_build == "hg19":

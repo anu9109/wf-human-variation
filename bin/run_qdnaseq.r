@@ -43,8 +43,11 @@ if (argv$reference == "hg38") {
   library(QDNAseq.hg38)
   bins <- getBinAnnotations(binSize=argv$binsize, genome="hg38")
 } else if (argv$reference == "hg19") {
-    library(QDNAseq.hg19)
+  library(QDNAseq.hg19)
   bins <- getBinAnnotations(binSize=argv$binsize, genome="hg19")
+} else if (argv$reference == "chm13v2") {
+  library(QDNAseq.chm13v2)
+  bins <- getBinAnnotations(binSize=argv$binsize, genome="chm13v2")
 }
 
 

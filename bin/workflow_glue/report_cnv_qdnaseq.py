@@ -158,7 +158,9 @@ def process_fastcat(fastcat_file):
 
 def process_chr_sizes(genome):
     """Load the chromosome sizes."""
-    s = f"data/reference/{genome}/{genome}.chrom.sizes.gz"
+    # ezcharts only bundles hg38 and hg19; fall back to hg38 for other builds
+    genome_for_sizes = genome if genome in ('hg38', 'hg19') else 'hg38'
+    s = f"data/reference/{genome_for_sizes}/{genome_for_sizes}.chrom.sizes.gz"
     sizes = pd.read_csv(
         resource_filename(
             'ezcharts',
@@ -473,11 +475,20 @@ def make_report(
 
         track_data['color'] = util.Colors.grey80
 
+        # ezcharts ideogram only supports hg38 and hg19; use hg38 as a
+        # visual approximation for other builds (e.g. chm13v2)
+        genome_for_ideo = genome if genome in ('hg38', 'hg19') else 'hg38'
+        if genome != genome_for_ideo:
+            p(f"""Note: The ideogram below uses hg38 band annotations as a
+            visual approximation because ezcharts does not yet include
+            cytoBand data for {genome}. Genomic coordinates displayed are
+            correct for {genome}.""")
+
         band_types = ['acen', 'gvar', 'stalk']
         bands_df = pd.read_csv(
             resource_filename(
                 'ezcharts',
-                f"data/reference/{genome}/cytoBand.txt.gz"),
+                f"data/reference/{genome_for_ideo}/cytoBand.txt.gz"),
             sep="\t",
             header=None)
 
@@ -499,7 +510,7 @@ def make_report(
             ideo.ideogram(
                 blocks=[bands_df, cnv_data],
                 track=track_data,
-                genome=genome),
+                genome=genome_for_ideo),
             height='1000px', width='100%', theme='epi2melabs')
         p("""Red: Increased copy number detected""")
         p("""Blue: Decreased copy number detected""")
