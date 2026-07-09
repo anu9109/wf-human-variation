@@ -1,0 +1,26 @@
+FROM ontresearch/wf-cnv:sha428cb19e51370020ccf29ec2af4eead44c6a17c2
+
+USER root
+
+# Install comprehensive system dependencies for R package builds
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    libgit2-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff-dev \
+    libjpeg-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    fontconfig-config \
+    fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install remotes (lighter than devtools) and QDNAseq.chm13v2 from GitHub
+RUN R -e "install.packages('remotes', repos='https://cloud.r-project.org')"
+RUN R -e "remotes::install_github('RodrigoGM/QDNAseq.chm13v2', dependencies = TRUE)"
+
+USER 1001
