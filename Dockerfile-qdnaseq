@@ -20,7 +20,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install remotes (lighter than devtools) and QDNAseq.chm13v2 from GitHub
-RUN R -e "install.packages('remotes', repos='https://cloud.r-project.org')"
-RUN R -e "remotes::install_github('RodrigoGM/QDNAseq.chm13v2', dependencies = TRUE)"
+#RUN R -e "install.packages('remotes', repos='https://cloud.r-project.org')"
+#RUN R -e "remotes::install_github('RodrigoGM/QDNAseq.chm13v2', dependencies = TRUE)"
+
+# Install BiocManager and Bioconductor deps first, then install from GitHub
+RUN R -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org')"
+RUN R -e "BiocManager::install(c('QDNAseq', 'Biobase'), ask = FALSE, update = FALSE)"
+RUN R -e "remotes::install_github('RodrigoGM/QDNAseq.chm13v2', dependencies = TRUE)" \
+ && R -e "library(QDNAseq.chm13v2)"
 
 USER 1001
