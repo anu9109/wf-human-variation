@@ -243,8 +243,9 @@ def copy_number_plot(
 
     for count, chromosome in enumerate(chromosomes):
         # to do - grid sizes need to represent chr sizes
-        width = chr_sizes.loc[
+        width_series = chr_sizes.loc[
             chr_sizes['chr'] == f"chr{chromosome}"]["percent"]
+        width = float(width_series.iloc[0]) if not width_series.empty else 1.0
 
         grid.append({
             'left': f'{left}%',
