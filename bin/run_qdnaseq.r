@@ -90,6 +90,11 @@ copyNumbersNormalized <- normalizeBins(copyNumbers)
 #Smooth outliers
 copyNumbersSmooth <- smoothOutlierBins(copyNumbersNormalized)
 
+# Floor negative values to avoid NaNs in sqrt transform during segmentation
+cn_data <- assayDataElement(copyNumbersSmooth, "copynumber")
+cn_data[!is.na(cn_data) & cn_data < 0] <- 0
+assayDataElement(copyNumbersSmooth, "copynumber") <- cn_data
+
 #Plot smoothed copy number profile
 plot(copyNumbersSmooth)
 
